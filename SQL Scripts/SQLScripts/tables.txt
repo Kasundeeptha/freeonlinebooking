@@ -1,0 +1,139 @@
+USE [HotelCRM]
+GO
+
+/****** Object:  Table [dbo].[Customer]    Script Date: 19/1/2024 1:06:51 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Customer](
+	[CusEmail] [varchar](50) NULL,
+	[CusPassword] [varchar](50) NULL,
+	[CusRegNo] [varchar](10) NULL
+) ON [PRIMARY]
+GO
+USE [HotelCRM]
+GO
+
+/****** Object:  Table [dbo].[CustomerInq]    Script Date: 19/1/2024 1:08:12 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[CustomerInq](
+	[CusEmail] [varchar](50) NULL,
+	[CusName] [varchar](50) NULL,
+	[CusInq] [varchar](50) NULL,
+	[CusTitle] [varchar](10) NULL
+) ON [PRIMARY]
+GO
+
+USE [HotelCRM]
+GO
+
+/****** Object:  Table [dbo].[Location]    Script Date: 19/1/2024 1:08:34 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Location](
+	[LocId] [varchar](50) NULL,
+	[LocationName] [varchar](50) NULL,
+	[Adults] [int] NULL,
+	[Children] [int] NULL
+) ON [PRIMARY]
+GO
+
+USE [HotelCRM]
+GO
+
+/****** Object:  Table [dbo].[LocRequest]    Script Date: 19/1/2024 1:09:05 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[LocRequest](
+	[Request] [varchar](50) NULL,
+	[DateFrom] [datetime] NULL,
+	[DateTo] [datetime] NULL,
+	[InDate] [datetime] NULL,
+	[Locid] [varchar](50) NULL,
+	[Adults] [int] NULL,
+	[Children] [int] NULL,
+	[Status] [varchar](50) NULL
+) ON [PRIMARY]
+GO
+
+USE [HotelCRM]
+GO
+
+/****** Object:  Table [dbo].[svs_requests]    Script Date: 19/1/2024 1:09:32 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[svs_requests](
+	[request_id] [int] NULL,
+	[service_id] [int] NULL,
+	[urgency_id] [int] NULL,
+	[name] [varchar](50) NULL,
+	[roomno] [varchar](50) NULL,
+	[mobile] [varchar](50) NULL,
+	[req_status] [varchar](50) NULL
+) ON [PRIMARY]
+GO
+
+USE [HotelCRM]
+GO
+
+/****** Object:  Table [dbo].[svs_services]    Script Date: 19/1/2024 1:10:02 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[svs_services](
+	[serviceid] [int] NULL,
+	[servicename] [varchar](50) NULL
+) ON [PRIMARY]
+GO
+
+USE [HotelCRM]
+GO
+
+/****** Object:  Table [dbo].[svs_urgence]    Script Date: 19/1/2024 1:10:27 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[svs_urgence](
+	[urgence_id] [int] NULL,
+	[urgence] [varchar](50) NULL
+) ON [PRIMARY]
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,2 @@
+In the web.config file:
+Server=localhost\SQLEXPRESS;Database=hotelCRM;Trusted_Connection=True;

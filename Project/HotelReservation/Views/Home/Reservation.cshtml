@@ -1,0 +1,369 @@
+﻿@{
+    ViewBag.Title = "Reservation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<html>
+<head>
+    <!---->
+    <meta name="viewport" content="width=device-width" />
+    <title>Reservation</title>
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .row {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .column {
+            flex: 50%;
+            padding: 10px;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        input[type=text], select, textarea, input[type=password],
+        input[type=date] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-top: 6px;
+            margin-bottom: 16px;
+            resize: vertical;
+        }
+
+        #textincrement {
+            width: 50%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-top: 6px;
+            margin-bottom: 16px;
+            resize: vertical;
+        }
+
+        textarea:hover {
+            background-color: #e5dfdf;
+        }
+
+        select:hover {
+            background-color: #e5dfdf;
+        }
+
+        input[type=text]:hover {
+            background-color: #e5dfdf;
+        }
+
+        input[type=password]:hover {
+            background-color: #e5dfdf;
+        }
+
+        input[type=date]:hover {
+            background-color: #e5dfdf;
+        }
+
+        input[type=button] {
+            background-color: #04AA6D;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            input[type=button]:hover {
+                background-color: #45a049;
+            }
+
+        .container_div {
+            border-radius: 5px;
+            background-color: #FFFFFF;
+            padding: 20px;
+            width: 96%;
+        }
+    </style>
+
+</head>
+<body onload="loaddata();">
+    <div class="row">
+        <div class="column">
+
+            <div class="container_div">
+                <table width="95%">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <label for="location">Where are you going?</label>
+                            </td>
+                            <td>
+                                <select id="location" name="location">
+                                    <option value="0"></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="datefrom">Check In</label>
+                            </td>
+                            <td>
+                                <input type="date" id="datefrom" name="datefrom">
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <label for="dateto">Check Out</label>
+                            </td>
+                            <td>
+                                <input type="date" id="dateto" name="dateto">
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <label for="adults">How Many Adults?</label>
+                            </td>
+                            <td>
+                                <input type="text" style="width:30%" id="adults" name="adults" value="0" readonly>
+                                <input id="btnadultplus" type="button" value="+" width="80" onclick="btnadultplus();" />
+                                <input id="btnadultmin" type="button" value="-" width="80" onclick="btnadultmin();" />
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <label for="children">How Many Children?</label>
+                            </td>
+                            <td>
+                                <input type="text" style="width:30%" id="children" name="children" value="0" readonly>
+                                <input id="btnchildplus" type="button" value="+" width="80" onclick="btnchildplus();" />
+                                <input id="btnchildmin" type="button" value="-" width="80" onclick="btnchildmin();" />
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                            </td>
+                            <td>
+                                <input id="btnSave" onclick="SendInquiry();" type="button" value="Send Inquiry" width="130" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="column">
+
+        </div>
+</body>
+</html>
+
+<script type="text/jscript">
+    function loaddata() {
+        GetLocation();
+    }
+
+    function GetLocation() {
+
+        $.ajax({
+            url: '@Url.Action("GetLocation", "Home")',
+            type: 'post',
+            cache: false,
+            async: true,
+            data: { },
+
+            success: function (data) {
+
+                if (data.Error == "NO DATA FOUND") {
+                    alert('No Items');
+                    return;
+                }
+
+                var dplLocation = $('#location');
+
+                $.each(data.GetLocation, function (i, GetLocation) {
+
+                    var option = $("<option/>");
+                    option.attr("value", GetLocation._Location).text(GetLocation._Location + ' - ' + GetLocation._LocationName);
+                    dplLocation.append(option);
+
+                });
+            }
+
+        });
+    }
+
+    function btnchildplus() {
+        var val = document.getElementById("children").value;
+        $("#children").val(parseInt(val) + 1);
+    }
+
+    function btnchildmin() {
+        var val = document.getElementById("children").value;
+        if (parseInt(val) > 0)
+        $("#children").val(parseInt(val) - 1);
+    }
+
+    function btnadultplus() {
+        var val = document.getElementById("adults").value;
+        $("#adults").val(parseInt(val) + 1);
+    }
+
+    function btnadultmin() {
+        var val = document.getElementById("adults").value;
+        if (parseInt(val) > 0)
+            $("#adults").val(parseInt(val) - 1);
+    }
+
+    function SendInquiry() {
+        var location = document.getElementById("location").value;
+
+        if (location == '0') {
+            alert('Please select location.');
+            return;
+        }
+
+        var checkin = document.getElementById("datefrom").value;
+        //alert(typeof(checkin) == undefined)
+
+        if (checkin == '') {
+            alert('Please select check in.');
+            return;
+        }
+
+        var checkout = document.getElementById("dateto").value;
+
+        if (checkout == ' ') {
+            alert('Please select check out.');
+            return;
+        }
+
+        var adults = document.getElementById("adults").value;
+        var children = document.getElementById("children").value;
+
+        if (adults == '0' && children == '0') {
+            alert('Please provide adults or children.');
+            return;
+        }
+
+        if (confirm("Do you want to make a reservation?") == false) {
+            return;
+        }
+
+        $.ajax({
+
+            url: '@Url.Action("Reserve", "Home")',
+            type: 'Post',
+            cache: false,
+            async: false,
+            data: {
+                In_Location: location,
+                In_Date_From: checkin,
+                In_Date_To: checkout,
+                In_Adults:adults,
+                In_Children: children
+
+            },
+
+            success: function (data) {
+                if (data.Error == "NO DATA FOUND") {
+                    alert('Error!');
+                    EndLoader(); return;
+                }
+
+                alert('Successfully Reserved.');
+
+            }
+
+
+        });
+    }
+
+
+    function Save() {
+        var location = document.getElementById("location").val();
+        //alert(location);
+        if (location == '0') {
+            alert('Please select location.');
+            return;
+        }
+
+        if (confirm("Do you want to save this GIN?") == false) {
+            return;
+        }
+
+        /*
+
+        var GinNo = '';
+        var ItemCode = " ";
+        var gin_qty = 0;
+        var stock = 0;
+
+        var row_index = 0;
+        var PartList = [[, , ,]];
+        var l = parseInt(document.getElementById("tblItemGrid").rows.length);
+
+        for (i = 1; i < l; i++) {
+            ItemCode = tblItemGrid.rows[i].cells[0].innerHTML;
+            gin_qty = parseFloat(document.getElementById("tblItemGrid").rows[i].cells[4].childNodes[0].value);
+            stock = parseFloat(tblItemGrid.rows[i].cells[3].innerHTML).toFixed(0);
+
+            if (gin_qty > 0) {
+                row_index = row_index + 1;
+                PartList[0, row_index] = [ItemCode, gin_qty];
+            }
+
+            if(gin_qty > stock)
+            {
+                alert('Please check gin_qty > stock');
+                return;
+            }
+        }
+
+        if (row_index == 0) {
+            alert('Please provide GIN quantity');
+            return;
+        }
+
+        var json = JSON.stringify(PartList);
+        //alert(json);*/
+        $.ajax({
+
+            url: '@Url.Action("Register", "Home")',
+            type: 'Post',
+            cache: false,
+            async: false,
+            data: {
+                IN_JSON: 'B',
+                In_Email: 'C',
+                In_Password: 'P',
+                IN_STATUS:'A'
+
+                //string IN_JSON, string In_Email, string In_Password, string IN_STATUS
+            },
+
+            success: function (data) {
+                if (data.Error == "NO DATA FOUND") {
+                    alert('Error!');
+                    EndLoader(); return;
+                }
+
+                alert('Message');
+
+            }
+
+
+        });
+
+    }
+
+</script>

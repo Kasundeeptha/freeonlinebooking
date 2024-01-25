@@ -1,0 +1,283 @@
+USE [HotelCRM]
+GO
+
+/****** Object:  StoredProcedure [dbo].[Pro_Cus_In_Inquiry]    Script Date: 19/1/2024 1:12:22 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Kasun Boralugoda
+-- Create date: 18/01/2024
+-- Description:	Insert customer inquiries
+-- =============================================
+CREATE PROCEDURE [dbo].[Pro_Cus_In_Inquiry] 
+
+	@In_Email varchar(50) = " ", 
+	@In_Name varchar(50) = 0,
+	@In_Inquiry varchar(300) = " ", 
+	@In_Title varchar(10) = 0
+	
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+
+
+	insert into CustomerInq(CusEmail, CusName, CusInq, CusTitle) values(@In_Email, @In_Name, @In_Inquiry, @In_Title);
+
+END
+GO
+
+USE [HotelCRM]
+GO
+
+/****** Object:  StoredProcedure [dbo].[Pro_Cus_People_Count]    Script Date: 19/1/2024 1:12:54 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:		Kasun Boralugoda
+-- Create date: 17/01/2024
+-- Description:	Insert and Return RegNo
+-- =============================================
+CREATE PROCEDURE [dbo].[Pro_Cus_People_Count] 
+
+	@In_LocId varchar(50) = " ", 
+	@In_FromDate datetime,
+	@In_ToDate datetime
+	
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	--SELECT In_Email, In_Password
+	
+	/*
+	select sum(locrequest.adults) noadults, sum(locrequest.children) nochildren,locrequest.locid, 
+	location.adults - sum(locrequest.adults) remadults, location.children - sum(locrequest.children) remchildren
+	from locrequest, location
+	where locrequest.locid = location.locid and
+	datefrom between @In_FromDate and @In_ToDate or dateto between @In_FromDate and @In_ToDate and locrequest.locid = @In_LocId
+	group by locrequest.locid, location.adults, location.children;
+	*/
+
+	select (select adults from location where locid = @In_LocId)-sum(locrequest.adults) remadults, 
+	(select children from location where locid = @In_LocId) - sum(locrequest.children) remchildren
+	from locrequest
+	where locrequest.locid = @In_LocId and
+	datefrom between @In_FromDate and @In_ToDate or dateto between @In_FromDate and @In_ToDate;
+
+
+
+
+END
+GO
+
+USE [HotelCRM]
+GO
+
+/****** Object:  StoredProcedure [dbo].[Pro_Cus_People_Insert]    Script Date: 19/1/2024 1:13:17 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:		Kasun Boralugoda
+-- Create date: 17/01/2024
+-- Description:	Insert and Return RegNo
+-- =============================================
+CREATE PROCEDURE [dbo].[Pro_Cus_People_Insert] 
+
+	@In_LocId varchar(50) = " ", 
+	@In_FromDate datetime,
+	@In_ToDate datetime,
+	@In_NumAdult int,
+	@In_NumChild int
+	
+AS
+declare @ReqNo int;
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	--SELECT In_Email, In_Password
+	select @ReqNo=count(request)+1 from locrequest;
+	
+	insert into locrequest(request,datefrom,dateto,indate,locid,adults,children,status) 
+						values(@ReqNo,@In_FromDate,@In_ToDate,GETDATE(),@In_LocId,@In_NumAdult,@In_NumChild,'A');
+
+	select @ReqNo ReqNo;
+
+END
+GO
+USE [HotelCRM]
+GO
+
+/****** Object:  StoredProcedure [dbo].[Pro_Cus_Register]    Script Date: 19/1/2024 1:13:42 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Kasun Boralugoda
+-- Create date: 17/01/2024
+-- Description:	Insert and Return RegNo
+-- =============================================
+CREATE PROCEDURE [dbo].[Pro_Cus_Register] 
+
+	@In_Email varchar(50) = " ", 
+	@In_Password varchar(50) = 0
+	
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	--SELECT In_Email, In_Password
+
+	insert into Customer(CusEmail, CusPassword) values(@In_Email, @In_Password);
+
+END
+GO
+USE [HotelCRM]
+GO
+
+/****** Object:  StoredProcedure [dbo].[Svs_Get_Services]    Script Date: 19/1/2024 1:14:04 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:		Kasun Boralugoda
+-- Create date: 19/01/2024
+-- Description:	Insert and Return RegNo
+-- =============================================
+CREATE PROCEDURE [dbo].[Svs_Get_Services] 
+
+	
+	
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	--SELECT In_Email, In_Password
+
+	select serviceid, servicename from svs_services;
+
+END
+GO
+USE [HotelCRM]
+GO
+
+/****** Object:  StoredProcedure [dbo].[Svs_Get_Urgence]    Script Date: 19/1/2024 1:14:24 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:		Kasun Boralugoda
+-- Create date: 19/01/2024
+-- Description:	Insert and Return RegNo
+-- =============================================
+CREATE PROCEDURE [dbo].[Svs_Get_Urgence] 
+
+	
+	
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	--SELECT In_Email, In_Password
+
+	select urgence_id, urgence from svs_urgence;
+
+END
+GO
+USE [HotelCRM]
+GO
+
+/****** Object:  StoredProcedure [dbo].[svs_save_request]    Script Date: 19/1/2024 1:14:48 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Kasun Boralugoda
+-- Create date: 18/01/2024
+-- Description:	Insert customer inquiries
+-- =============================================
+CREATE PROCEDURE [dbo].[svs_save_request] 
+
+	@In_ServiceId varchar(50) = " ", 
+	@In_UrgencyId varchar(50) = 0,
+	@In_Name varchar(300) = " ", 
+	@In_RoomNo varchar(10) = 0,
+	@In_Mobile varchar(50) = 0
+	
+AS
+declare @ReqNo int;
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+
+	select @ReqNo=count(request_id)+1 from svs_requests;
+	insert into svs_requests(request_id, service_id, urgency_id, name, roomno, mobile, req_status) 
+		values(@ReqNo, @In_ServiceId, @In_UrgencyId, @In_Name, @In_RoomNo, @In_Mobile, 'New');
+
+		select @ReqNo ReqNo;
+
+END
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
